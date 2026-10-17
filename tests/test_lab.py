@@ -1,4 +1,6 @@
 import unittest
+import json
+from pathlib import Path
 
 from lab import ROWS, group_mean, mean, pearson_correlation
 
@@ -16,6 +18,14 @@ class LabTests(unittest.TestCase):
     def test_invalid_mean_raises(self):
         with self.assertRaises(ValueError):
             mean([])
+
+    def test_learning_notebooks_are_valid_and_present(self):
+        notebooks = sorted(Path("notebooks").glob("*.ipynb"))
+        self.assertGreaterEqual(len(notebooks), 2)
+        for path in notebooks:
+            content = json.loads(path.read_text(encoding="utf-8"))
+            self.assertEqual(content["nbformat"], 4)
+            self.assertTrue(content["cells"])
 
 
 if __name__ == "__main__":
